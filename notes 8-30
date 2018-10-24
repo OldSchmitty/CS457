@@ -1,0 +1,22 @@
+Notes for Networking lab session 1:
+
+Chapter 1: R13, R18, P5, P10,P25
+2 users can transmit at same time because of packet switching
+probability of a given user is transmitting.
+time slot divinded into 5 time slots. For each user 1/5
+
+p = .2
+
+(n r) p^r (1-p) ^(n-r)
+(3 3) p^3 (1-p) ^(3-3)
+= .2^3 = .008
+
+
+packet length (L) = 1000 bytes
+		= 8000 bits
+Distance = (d) = 2500 km
+Prop SPeed = (s) = 250000000 m/s
+Transmission speed = (R) = 2mbps
+			= 2*10^6 bps
+
+
