@@ -37,8 +37,8 @@
 					<DistClean command="/usr/bin/make -j4 -f &quot;/home/marks/School/CS457/Server/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
-			<Target title="Server">
-				<Option output="/home/marks/School/CS457/Server/cmake-build-debug/Server" prefix_auto="0" extension_auto="0"/>
+			<Target title="ChatServer">
+				<Option output="/home/marks/School/CS457/Server/cmake-build-debug/ChatServer" prefix_auto="0" extension_auto="0"/>
 				<Option working_dir="/home/marks/School/CS457/Server/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
@@ -54,14 +54,14 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/home/marks/School/CS457/Server/cmake-build-debug/Makefile&quot;  VERBOSE=1 Server"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/marks/School/CS457/Server/cmake-build-debug/Makefile&quot;  VERBOSE=1 ChatServer"/>
 					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/marks/School/CS457/Server/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
 					<Clean command="/usr/bin/make -j4 -f &quot;/home/marks/School/CS457/Server/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 					<DistClean command="/usr/bin/make -j4 -f &quot;/home/marks/School/CS457/Server/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
-			<Target title="Server/fast">
-				<Option output="/home/marks/School/CS457/Server/cmake-build-debug/Server" prefix_auto="0" extension_auto="0"/>
+			<Target title="ChatServer/fast">
+				<Option output="/home/marks/School/CS457/Server/cmake-build-debug/ChatServer" prefix_auto="0" extension_auto="0"/>
 				<Option working_dir="/home/marks/School/CS457/Server/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
@@ -77,15 +77,72 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/home/marks/School/CS457/Server/cmake-build-debug/Makefile&quot;  VERBOSE=1 Server/fast"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/marks/School/CS457/Server/cmake-build-debug/Makefile&quot;  VERBOSE=1 ChatServer/fast"/>
 					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/marks/School/CS457/Server/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
 					<Clean command="/usr/bin/make -j4 -f &quot;/home/marks/School/CS457/Server/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 					<DistClean command="/usr/bin/make -j4 -f &quot;/home/marks/School/CS457/Server/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/marks/School/CS457/Server/main.cpp">
-			<Option target="Server"/>
+		<Unit filename="/home/marks/School/CS457/Server/CClient.cpp">
+			<Option target="ChatServer"/>
+		</Unit>
+		<Unit filename="/home/marks/School/CS457/Server/CClient.h">
+			<Option target="ChatServer"/>
+		</Unit>
+		<Unit filename="/home/marks/School/CS457/Server/Channel.cpp">
+			<Option target="ChatServer"/>
+		</Unit>
+		<Unit filename="/home/marks/School/CS457/Server/Channel.h">
+			<Option target="ChatServer"/>
+		</Unit>
+		<Unit filename="/home/marks/School/CS457/Server/ChatServer.cpp">
+			<Option target="ChatServer"/>
+		</Unit>
+		<Unit filename="/home/marks/School/CS457/Server/ChatServer.h">
+			<Option target="ChatServer"/>
+		</Unit>
+		<Unit filename="/home/marks/School/CS457/Server/ClientManager.cpp">
+			<Option target="ChatServer"/>
+		</Unit>
+		<Unit filename="/home/marks/School/CS457/Server/ClientManager.h">
+			<Option target="ChatServer"/>
+		</Unit>
+		<Unit filename="/home/marks/School/CS457/Server/OutputManager.cpp">
+			<Option target="ChatServer"/>
+		</Unit>
+		<Unit filename="/home/marks/School/CS457/Server/OutputManager.h">
+			<Option target="ChatServer"/>
+		</Unit>
+		<Unit filename="/home/marks/School/CS457/Server/Protocols.cpp">
+			<Option target="ChatServer"/>
+		</Unit>
+		<Unit filename="/home/marks/School/CS457/Server/Protocols.h">
+			<Option target="ChatServer"/>
+		</Unit>
+		<Unit filename="/home/marks/School/CS457/Server/User.cpp">
+			<Option target="ChatServer"/>
+		</Unit>
+		<Unit filename="/home/marks/School/CS457/Server/User.h">
+			<Option target="ChatServer"/>
+		</Unit>
+		<Unit filename="/home/marks/School/CS457/Server/cmake-build-debug/CMakeFiles/main.cpp">
+			<Option target="ChatServer"/>
+		</Unit>
+		<Unit filename="/home/marks/School/CS457/Server/driver.cpp">
+			<Option target="ChatServer"/>
+		</Unit>
+		<Unit filename="/home/marks/School/CS457/Server/tcpServerSocket.cpp">
+			<Option target="ChatServer"/>
+		</Unit>
+		<Unit filename="/home/marks/School/CS457/Server/tcpServerSocket.h">
+			<Option target="ChatServer"/>
+		</Unit>
+		<Unit filename="/home/marks/School/CS457/Server/tcpUserSocket.cpp">
+			<Option target="ChatServer"/>
+		</Unit>
+		<Unit filename="/home/marks/School/CS457/Server/tcpUserSocket.h">
+			<Option target="ChatServer"/>
 		</Unit>
 		<Unit filename="/home/marks/School/CS457/Server/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>

@@ -22,6 +22,7 @@ cs457::tcpUserSocket::tcpUserSocket(const char* sAddress, uint16_t port){
     if ((userSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         printf("\n Socket creation error \n");
     }
+
     memset(&userAddress, '0', sizeof(userAddress));
     userAddress.sin_family = AF_INET;
     userAddress.sin_port = htons(port);
@@ -49,6 +50,7 @@ int cs457::tcpUserSocket::getSocket()
 
 int cs457::tcpUserSocket::closeSocket()
 {
+    shutdown(userSocket, SHUT_RDWR);
     return close(userSocket);
 }
 

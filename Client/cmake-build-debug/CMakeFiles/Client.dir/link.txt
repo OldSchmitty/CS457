@@ -1,1 +1,1 @@
-/usr/bin/c++  -g   CMakeFiles/Client.dir/main.cpp.o  -o Client 
+/usr/bin/c++  -pthread -g   CMakeFiles/Client.dir/tcpUserSocket.cpp.o CMakeFiles/Client.dir/ClientDriver.cpp.o CMakeFiles/Client.dir/Protocols.cpp.o  -o Client 

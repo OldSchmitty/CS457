@@ -4,7 +4,9 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/marks/School/CS457/Server/main.cpp" "/home/marks/School/CS457/Server/cmake-build-debug/CMakeFiles/Server.dir/main.cpp.o"
+  "/home/marks/School/CS457/Server/driver.cpp" "/home/marks/School/CS457/Server/cmake-build-debug/CMakeFiles/Server.dir/driver.cpp.o"
+  "/home/marks/School/CS457/Server/tcpServerSocket.cpp" "/home/marks/School/CS457/Server/cmake-build-debug/CMakeFiles/Server.dir/tcpServerSocket.cpp.o"
+  "/home/marks/School/CS457/Server/tcpUserSocket.cpp" "/home/marks/School/CS457/Server/cmake-build-debug/CMakeFiles/Server.dir/tcpUserSocket.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

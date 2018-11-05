@@ -5,9 +5,16 @@
 #ifndef SERVER_PROTOCOLS_H
 #define SERVER_PROTOCOLS_H
 #include <string>
+#include<vector>
+#include "User.h"
+#include "ChatServer.h"
+#include "tcpUserSocket.h"
 
 class Protocols {
-    const std::string JOIN = ":join";
+    public:
+        static std::vector<std::string> parseMessage(std::string msg, User *user, ChatServer &server, cs457::tcpUserSocket *sckt);
+        static std::string getAction(std::string msg);
+        static std::vector<std::string> split(const std::string& s, char delimiter);
 };
 
 

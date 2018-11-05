@@ -27,10 +27,10 @@ namespace cs457
             socklen_t getLenghtPointer();
             int getSocket(); 
             int closeSocket(); 
-            std::tuple<string,ssize_t> recvString(int bufferSize=4096,bool useMutex = true);
+            std::tuple<string,ssize_t> recvString(int bufferSize=4096,bool useMutex = false);
             void setUserInfoIPv4(string clientAddress,uint16_t port);
 
-            ssize_t sendString(const string & data,bool useMutex = true);
+            ssize_t sendString(const string & data,bool useMutex = false);
             string getUniqueIdentifier();
          
 

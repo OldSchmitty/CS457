@@ -9,4 +9,4 @@ add_executable(ChatServer
         tcpUserSocket.cpp
         tcpServerSocket.h
         tcpServerSocket.cpp
-        cmake-build-debug/CMakeFiles/main.cpp ClientManager.cpp ClientManager.h Channel.cpp Channel.h Protocols.h)
+        cmake-build-debug/CMakeFiles/main.cpp ClientManager.cpp ClientManager.h Channel.cpp Channel.h Protocols.h ChatServer.cpp ChatServer.h User.cpp User.h CClient.cpp CClient.h OutputManager.cpp OutputManager.h Protocols.cpp)

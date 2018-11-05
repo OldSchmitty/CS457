@@ -111,44 +111,314 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named Server
+# Target rules for targets named ChatServer
 
 # Build rule for target.
-Server: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 Server
-.PHONY : Server
+ChatServer: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ChatServer
+.PHONY : ChatServer
 
 # fast build rule for target.
-Server/fast:
-	$(MAKE) -f CMakeFiles/Server.dir/build.make CMakeFiles/Server.dir/build
-.PHONY : Server/fast
+ChatServer/fast:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/build
+.PHONY : ChatServer/fast
 
-main.o: main.cpp.o
+CClient.o: CClient.cpp.o
 
-.PHONY : main.o
+.PHONY : CClient.o
 
 # target to build an object file
-main.cpp.o:
-	$(MAKE) -f CMakeFiles/Server.dir/build.make CMakeFiles/Server.dir/main.cpp.o
-.PHONY : main.cpp.o
+CClient.cpp.o:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/CClient.cpp.o
+.PHONY : CClient.cpp.o
 
-main.i: main.cpp.i
+CClient.i: CClient.cpp.i
 
-.PHONY : main.i
+.PHONY : CClient.i
 
 # target to preprocess a source file
-main.cpp.i:
-	$(MAKE) -f CMakeFiles/Server.dir/build.make CMakeFiles/Server.dir/main.cpp.i
-.PHONY : main.cpp.i
+CClient.cpp.i:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/CClient.cpp.i
+.PHONY : CClient.cpp.i
 
-main.s: main.cpp.s
+CClient.s: CClient.cpp.s
 
-.PHONY : main.s
+.PHONY : CClient.s
 
 # target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) -f CMakeFiles/Server.dir/build.make CMakeFiles/Server.dir/main.cpp.s
-.PHONY : main.cpp.s
+CClient.cpp.s:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/CClient.cpp.s
+.PHONY : CClient.cpp.s
+
+CMakeFiles/main.o: CMakeFiles/main.cpp.o
+
+.PHONY : CMakeFiles/main.o
+
+# target to build an object file
+CMakeFiles/main.cpp.o:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/CMakeFiles/main.cpp.o
+.PHONY : CMakeFiles/main.cpp.o
+
+CMakeFiles/main.i: CMakeFiles/main.cpp.i
+
+.PHONY : CMakeFiles/main.i
+
+# target to preprocess a source file
+CMakeFiles/main.cpp.i:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/CMakeFiles/main.cpp.i
+.PHONY : CMakeFiles/main.cpp.i
+
+CMakeFiles/main.s: CMakeFiles/main.cpp.s
+
+.PHONY : CMakeFiles/main.s
+
+# target to generate assembly for a file
+CMakeFiles/main.cpp.s:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/CMakeFiles/main.cpp.s
+.PHONY : CMakeFiles/main.cpp.s
+
+Channel.o: Channel.cpp.o
+
+.PHONY : Channel.o
+
+# target to build an object file
+Channel.cpp.o:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/Channel.cpp.o
+.PHONY : Channel.cpp.o
+
+Channel.i: Channel.cpp.i
+
+.PHONY : Channel.i
+
+# target to preprocess a source file
+Channel.cpp.i:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/Channel.cpp.i
+.PHONY : Channel.cpp.i
+
+Channel.s: Channel.cpp.s
+
+.PHONY : Channel.s
+
+# target to generate assembly for a file
+Channel.cpp.s:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/Channel.cpp.s
+.PHONY : Channel.cpp.s
+
+ChatServer.o: ChatServer.cpp.o
+
+.PHONY : ChatServer.o
+
+# target to build an object file
+ChatServer.cpp.o:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/ChatServer.cpp.o
+.PHONY : ChatServer.cpp.o
+
+ChatServer.i: ChatServer.cpp.i
+
+.PHONY : ChatServer.i
+
+# target to preprocess a source file
+ChatServer.cpp.i:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/ChatServer.cpp.i
+.PHONY : ChatServer.cpp.i
+
+ChatServer.s: ChatServer.cpp.s
+
+.PHONY : ChatServer.s
+
+# target to generate assembly for a file
+ChatServer.cpp.s:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/ChatServer.cpp.s
+.PHONY : ChatServer.cpp.s
+
+ClientManager.o: ClientManager.cpp.o
+
+.PHONY : ClientManager.o
+
+# target to build an object file
+ClientManager.cpp.o:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/ClientManager.cpp.o
+.PHONY : ClientManager.cpp.o
+
+ClientManager.i: ClientManager.cpp.i
+
+.PHONY : ClientManager.i
+
+# target to preprocess a source file
+ClientManager.cpp.i:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/ClientManager.cpp.i
+.PHONY : ClientManager.cpp.i
+
+ClientManager.s: ClientManager.cpp.s
+
+.PHONY : ClientManager.s
+
+# target to generate assembly for a file
+ClientManager.cpp.s:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/ClientManager.cpp.s
+.PHONY : ClientManager.cpp.s
+
+OutputManager.o: OutputManager.cpp.o
+
+.PHONY : OutputManager.o
+
+# target to build an object file
+OutputManager.cpp.o:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/OutputManager.cpp.o
+.PHONY : OutputManager.cpp.o
+
+OutputManager.i: OutputManager.cpp.i
+
+.PHONY : OutputManager.i
+
+# target to preprocess a source file
+OutputManager.cpp.i:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/OutputManager.cpp.i
+.PHONY : OutputManager.cpp.i
+
+OutputManager.s: OutputManager.cpp.s
+
+.PHONY : OutputManager.s
+
+# target to generate assembly for a file
+OutputManager.cpp.s:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/OutputManager.cpp.s
+.PHONY : OutputManager.cpp.s
+
+Protocols.o: Protocols.cpp.o
+
+.PHONY : Protocols.o
+
+# target to build an object file
+Protocols.cpp.o:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/Protocols.cpp.o
+.PHONY : Protocols.cpp.o
+
+Protocols.i: Protocols.cpp.i
+
+.PHONY : Protocols.i
+
+# target to preprocess a source file
+Protocols.cpp.i:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/Protocols.cpp.i
+.PHONY : Protocols.cpp.i
+
+Protocols.s: Protocols.cpp.s
+
+.PHONY : Protocols.s
+
+# target to generate assembly for a file
+Protocols.cpp.s:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/Protocols.cpp.s
+.PHONY : Protocols.cpp.s
+
+User.o: User.cpp.o
+
+.PHONY : User.o
+
+# target to build an object file
+User.cpp.o:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/User.cpp.o
+.PHONY : User.cpp.o
+
+User.i: User.cpp.i
+
+.PHONY : User.i
+
+# target to preprocess a source file
+User.cpp.i:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/User.cpp.i
+.PHONY : User.cpp.i
+
+User.s: User.cpp.s
+
+.PHONY : User.s
+
+# target to generate assembly for a file
+User.cpp.s:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/User.cpp.s
+.PHONY : User.cpp.s
+
+driver.o: driver.cpp.o
+
+.PHONY : driver.o
+
+# target to build an object file
+driver.cpp.o:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/driver.cpp.o
+.PHONY : driver.cpp.o
+
+driver.i: driver.cpp.i
+
+.PHONY : driver.i
+
+# target to preprocess a source file
+driver.cpp.i:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/driver.cpp.i
+.PHONY : driver.cpp.i
+
+driver.s: driver.cpp.s
+
+.PHONY : driver.s
+
+# target to generate assembly for a file
+driver.cpp.s:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/driver.cpp.s
+.PHONY : driver.cpp.s
+
+tcpServerSocket.o: tcpServerSocket.cpp.o
+
+.PHONY : tcpServerSocket.o
+
+# target to build an object file
+tcpServerSocket.cpp.o:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/tcpServerSocket.cpp.o
+.PHONY : tcpServerSocket.cpp.o
+
+tcpServerSocket.i: tcpServerSocket.cpp.i
+
+.PHONY : tcpServerSocket.i
+
+# target to preprocess a source file
+tcpServerSocket.cpp.i:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/tcpServerSocket.cpp.i
+.PHONY : tcpServerSocket.cpp.i
+
+tcpServerSocket.s: tcpServerSocket.cpp.s
+
+.PHONY : tcpServerSocket.s
+
+# target to generate assembly for a file
+tcpServerSocket.cpp.s:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/tcpServerSocket.cpp.s
+.PHONY : tcpServerSocket.cpp.s
+
+tcpUserSocket.o: tcpUserSocket.cpp.o
+
+.PHONY : tcpUserSocket.o
+
+# target to build an object file
+tcpUserSocket.cpp.o:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/tcpUserSocket.cpp.o
+.PHONY : tcpUserSocket.cpp.o
+
+tcpUserSocket.i: tcpUserSocket.cpp.i
+
+.PHONY : tcpUserSocket.i
+
+# target to preprocess a source file
+tcpUserSocket.cpp.i:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/tcpUserSocket.cpp.i
+.PHONY : tcpUserSocket.cpp.i
+
+tcpUserSocket.s: tcpUserSocket.cpp.s
+
+.PHONY : tcpUserSocket.s
+
+# target to generate assembly for a file
+tcpUserSocket.cpp.s:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/tcpUserSocket.cpp.s
+.PHONY : tcpUserSocket.cpp.s
 
 # Help Target
 help:
@@ -158,10 +428,40 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... Server"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
+	@echo "... ChatServer"
+	@echo "... CClient.o"
+	@echo "... CClient.i"
+	@echo "... CClient.s"
+	@echo "... CMakeFiles/main.o"
+	@echo "... CMakeFiles/main.i"
+	@echo "... CMakeFiles/main.s"
+	@echo "... Channel.o"
+	@echo "... Channel.i"
+	@echo "... Channel.s"
+	@echo "... ChatServer.o"
+	@echo "... ChatServer.i"
+	@echo "... ChatServer.s"
+	@echo "... ClientManager.o"
+	@echo "... ClientManager.i"
+	@echo "... ClientManager.s"
+	@echo "... OutputManager.o"
+	@echo "... OutputManager.i"
+	@echo "... OutputManager.s"
+	@echo "... Protocols.o"
+	@echo "... Protocols.i"
+	@echo "... Protocols.s"
+	@echo "... User.o"
+	@echo "... User.i"
+	@echo "... User.s"
+	@echo "... driver.o"
+	@echo "... driver.i"
+	@echo "... driver.s"
+	@echo "... tcpServerSocket.o"
+	@echo "... tcpServerSocket.i"
+	@echo "... tcpServerSocket.s"
+	@echo "... tcpUserSocket.o"
+	@echo "... tcpUserSocket.i"
+	@echo "... tcpUserSocket.s"
 .PHONY : help
 
 
