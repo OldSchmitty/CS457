@@ -28,8 +28,10 @@ namespace cs457
         int bindSocket();
         int listenSocket();
         tuple<shared_ptr<cs457::tcpUserSocket>,int> acceptSocket();
-      
-    private: 
+        void safeClose();
+
+
+            private:
         void init();
         void setSocketOptions();
         uint port; 

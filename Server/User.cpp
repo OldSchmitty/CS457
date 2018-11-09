@@ -5,12 +5,16 @@
 #include "User.h"
 #include "tcpUserSocket.h"
 
-User::User(){}
+User::User(){    this->mtx = new std::mutex();}
 User::User(std::string userName, std::string passWord, bool banStatus, cs457::tcpUserSocket *sckt){
     this->userName = userName;
     this->passWord = passWord;
     this->scktPointer = sckt;
     this->banStatus = banStatus;
+    this->mtx = new std::mutex();
+}
+User::~User(){
+    delete(this->mtx);
 }
 
 std::string User::getUserName() {
@@ -45,7 +49,11 @@ void User::setSocket(cs457::tcpUserSocket *sckt) {
     this->scktPointer = sckt;
 }
 
-void User::setActive() {this->active = true;}
+void User::setActive() {
+    mtx->lock();
+    this->active = true;
+    mtx->unlock();
+}
 void User::setInactive() {this->active = false;}
 bool User::getActive() {return this->active;}
 bool User::getBanStatus(){return this->banStatus;}
@@ -54,3 +62,11 @@ void User::unBan() {banStatus = false;}
 int User::getLevel() {return this->level;}
 void User::setLevel(int level) {this->level = level;}
 void User::sendMsg(std::string msg) {this->scktPointer->sendString(msg);}
+void User::setRealName(std::string name) {this->realName = name;}
+std::string User::getRealName() {return this->realName;}
+void User::disconnect(){
+    mtx->lock();
+    this->scktPointer->closeSocket();
+    active = false;
+    mtx->unlock();
+}

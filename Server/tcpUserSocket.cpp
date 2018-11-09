@@ -29,6 +29,7 @@ int cs457::tcpUserSocket::getSocket()
 }; 
 int cs457::tcpUserSocket::closeSocket()
 {
+    shutdown(userSocket, SHUT_RDWR);
     return close(userSocket);
 }; 
 
@@ -54,10 +55,19 @@ std::tuple<string,ssize_t> cs457::tcpUserSocket::recvString(int bufferSize, bool
     {
         recvMsgSize = recv(userSocket, stringBuffer, bufferSize, 0); 
     }
-    
-    
+    string msg = "";
+    int start = 0;
+    for(int i = 0; i<recvMsgSize; i++){
+        if (stringBuffer[i] == '\r')
+            if(i < recvMsgSize-1 && stringBuffer[i+1] == '\n') {
+                msg += string(&stringBuffer[start], i + 2 - start);
+                start = i + 2;
+                i++;
+            }
+    }
+
    
-    return make_tuple(string(stringBuffer),recvMsgSize);     
+    return make_tuple(msg,recvMsgSize);
 };
         
 

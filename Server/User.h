@@ -7,6 +7,7 @@
 #include <string>
 #include "tcpUserSocket.h"
 #include <vector>
+#include <mutex>
 
 const int USER = 0;
 const int CHANOP = 1;
@@ -20,15 +21,17 @@ class User {
         std::string nick = "";
         std::string hostName = "";
         std::string serverName = "";
+        std::string realName = "";
         cs457::tcpUserSocket *scktPointer;
         int level;
         bool active = false;
         bool banStatus;
-        std::vector<std::string> owner;
+        std::mutex* mtx;
 
 
     public:
         User();
+        ~User();
         User(std::string userName, std::string passWord, bool banStatus, cs457::tcpUserSocket *sckt);
         std::string getUserName();
         void setUserName(std::string userName);
@@ -47,6 +50,9 @@ class User {
         void ban();
         void unBan();
         void sendMsg(std::string msg);
+        void setRealName(std::string name);
+        std::string getRealName();
+        void disconnect();
 };
 
 

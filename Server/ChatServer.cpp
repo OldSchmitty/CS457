@@ -5,19 +5,20 @@
 #include <sys/user.h>
 #include "ChatServer.h"
 #include <fstream>
+#include <iostream>
 #include "Protocols.h"
 
 ChatServer::ChatServer(){
 
 }
 
-ChatServer::ChatServer(std::string configFile, std::string userFile){
-    //if (configFile != "")
-
-    //if (userFile != "")
-
+ChatServer::ChatServer(std::string filePath){
+    this->filePath = filePath;
+    loadChannelFile(filePath+"channels");
+    loadUserFile(filePath+"users");
+    loadBannedUsersFile(filePath+"banusers.txt");
+    loadBannerFile(filePath+"banner.txt");
 }
-
 
 int ChatServer::CreateChannel(std::string const channelName, const std::string passWord, const std::string description){
     Channel channel(channelName, passWord, description);
@@ -64,16 +65,21 @@ std::string ChatServer::joinChannel(std::string userName, std::string channel, s
     else{
         return "Channel does not exists\r\n";
     }
-    return "You have joined channel "+channel+"\r\n";
+    return "SERVER: Welcome to channel "+channel+ "\nDescription: "+channelMap[channel].getDescription()+"\r\n";
 }
 
 void ChatServer::shutDown() {
-    /*if (configFile == ""){
-
+    outputFiles();
+    for (auto it = userInfo.begin(); it != userInfo.end(); it++){
+        if (it->second.getActive()) {
+            it->second.sendMessage("SERVER: THE SERVER IS SHUTTING DOWN.");
+        }
     }
-    for (auto it = channelMap.begin(); it != channelMap.end(); it++){
-        it->second.
-    }*/
+    for (auto it = userInfo.begin(); it != userInfo.end(); it++){
+        if (it->second.getActive()) {
+            it->second.disconnect();
+        }
+    }
 }
 void ChatServer::banUser(std::string userName, std::string banName) {
     if (userInfo[userName].getLevel() >= SYSOP){
@@ -129,21 +135,27 @@ void ChatServer::loadUserFile(std::string fileName) {
     while(getline(is, input))
     {
         std::vector<std::string> sVect = Protocols::split(input, '\t');
-        if (sVect.size() == 4){
+        if (sVect.size() == 6){
             std::string userName = sVect[0];
-            std::string password = sVect[1];
+            std::string nick = sVect[1];
+            std::string password = sVect[2];
             if (password == "@")
                 password = "";
-            int level = stoi(sVect[2]);
-            std::string banned = sVect[3];
+            int level = stoi(sVect[3]);
+            std::string banned = sVect[4];
+            std::string realName = sVect[5];
+            if (realName == "@")
+                realName = "";
             User user;
+            user.setNick(nick);
             user.setUserName(userName);
             user.setPassWord(password);
             user.setLevel(level);
+            user.setRealName(realName);
             if (banned == "true"){
                 user.ban();
             }
-            userInfo[userName] = user;
+            userInfo[nick] = user;
         }
     }
     is.close();
@@ -162,6 +174,73 @@ bool ChatServer::hasChannel(std::string channelName) {
 }
 
 void ChatServer::addUser(User &user){
-    userInfo[user.getUserName()] = user;
+    userInfo[user.getNick()] = user;
+}
+
+void ChatServer::showUsers() {
+    for (auto it= userInfo.begin(); it != userInfo.end(); it++){
+        if (it->second.getActive()){
+            std::cout<<it->second.getUserName()<<std::endl;
+        }
+    }
+}
+
+std::string ChatServer::getBanner() {
+    return this->banner;
+}
+
+void ChatServer::setBanner(std::string banner){this->banner = banner;}
+
+void ChatServer::loadBannedUsersFile(std::string fileName){
+    std::ifstream is;
+    is.open(fileName);
+    std::string input;
+    while(getline(is, input)) {
+        this->bannedUsers.push_back(input);
+    }
+}
+void ChatServer::loadBannerFile(std::string bannerFile){
+    std::ifstream is;
+    is.open(bannerFile);
+    std::string banner;
+    std::string input;
+    while(getline(is, input)) {
+        banner += input;
+    }
+    this->setBanner(banner);
+}
+
+void ChatServer::outputFiles(){
+    std::ofstream of;
+    of.open(filePath+"channels");
+    for (auto it = channelMap.begin(); it != channelMap.end(); it++){
+        of << it->first + "\t" + it->second.getDescription() + "\t" << it->second.getPassWord() + "\t"<<it->second.getChanOps() +"\n";
+    }
+    of.close();
+    of.open(filePath+"users");
+    for (auto it = userInfo.begin(); it != userInfo.end(); it++){
+        of << it->second.getUserName()+"\t"<<it->first+"\t";
+        if (it->second.getPassWord() != "")
+            of<<it->second.getPassWord()+"\t";
+        else
+            of<<"@\t";
+        if (it->second.getBanStatus())
+            of << "true\t";
+        else
+            of << "false\t";
+        if (it->second.getRealName() == "")
+            of << "@\n";
+        else
+            of << it->second.getRealName()<<"\n";
+    }
+    of.close();
+    of.open(filePath+"banusers.txt");
+    for (int i = 0; i < bannedUsers.size(); i++){
+        of << bannedUsers[i]<<"\n";
+    }
+    of.close();
+    of.open(filePath+"banner.txt");
+    of << banner+"\n";
+    of.close();
 }
 

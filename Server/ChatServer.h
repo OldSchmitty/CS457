@@ -17,9 +17,14 @@ class ChatServer {
         std::map<std::string, User> userInfo;
         std::string configFile;
         std::string userFile;
+        std::string banner;
+        std::vector<std::string> bannedUsers;
+        std::string filePath;
+        void outputFiles();
+
     public:
         ChatServer();
-        ChatServer(std::string configFile, std::string userFile);
+        ChatServer(std::string filePath);
         int CreateChannel(std::string const channelName, const std::string passWord, const std::string description);
         int deleteChannel(std::string const channelName);
         void removeUser(std::string userName, std::string ChannelName);
@@ -35,6 +40,11 @@ class ChatServer {
         void loadUserFile(std::string fileName);
         User* getUser(std::string userName);
         bool hasChannel(std::string channelName);
+        void showUsers();
+        std::string getBanner();
+        void setBanner(std::string banner);
+        void loadBannedUsersFile(std::string fileName);
+        void loadBannerFile(std::string bannerFile);
 
 };
 

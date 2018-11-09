@@ -22,9 +22,11 @@ void OutputManager::outputThread(OutputManager &out){
     {
         std::unique_lock<std::mutex> locker(out.mtx);
         out.cv.wait(locker);
-        Message message = out.messages.front();
-        out.server->sendMsg(message.msg, message.channel, message.user);
-        out.messages.pop();
+        if (out.messages.size() > 0) {
+            Message message = out.messages.front();
+            out.server->sendMsg(message.msg, message.channel, message.user);
+            out.messages.pop();
+        }
         locker.unlock();
         out.cv.notify_all();
     }

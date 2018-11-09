@@ -20,9 +20,13 @@ std::vector<std::string> Protocols::split(const std::string& s, char delimiter) 
 }
 
 std::string Protocols::makeMessage(std::string str, std::string &channel) {
-    if (str.find('/') == 0) {
+    if (str.size() > 510)
+        std::cout<<"MESSAGE SIZE LIMIT OF 510 CHARACTERS"<<std::endl;
+    else if (str.find('/') == 0) {
         std::vector<std::string> sVect = split(str, ' ');
         std::string command = sVect[0].substr(1);
+        for (int i = 0; i<command.size(); i++)
+            command[i] = tolower(command[i]);
         str = commandFactory(command, sVect, channel);
     } else {
       str ="PRIVMSG "+channel+" "+str+"\r\n";
@@ -42,6 +46,19 @@ std::string Protocols::commandFactory(std::string command, std::vector<std::stri
             }
             channel = args[1];
         }
+    }
+    else if (command == "user" && args.size() >= 2){
+        rtn = "USER "+args[1];
+        if (args.size() > 2){
+            rtn += " "+ args[2];
+        }
+        rtn+="\r\n";
+    }
+    else if (command == "pass" && args.size() == 2){
+        rtn = "PASS "+args[1]+"\r\n";
+    }
+    else if (command == "nick" && args.size() == 2){
+        rtn = "NICK "+args[1]+"\r\n";
     }
     return rtn;
 }

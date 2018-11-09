@@ -11,7 +11,7 @@ Channel::Channel() {
 }
 
 Channel::Channel(std::string name, std::string passWord, std::string description) {
-    this->channelName = channelName;
+    this->channelName = name;
     this->passWord = passWord;
     this->description = description;
     channelProps["inviteOnly"] = false;
@@ -23,10 +23,10 @@ void Channel::setProp(std::string prop, bool var){
     channelProps[prop] = var;
 }
 
-bool Channel::addUser(std::string userName, User &user){
+bool Channel::addUser(std::string nick, User &user){
 
-    if (userMap.count(userName) == 0){
-        userMap[userName] = user;
+    if (userMap.count(nick) == 0){
+        userMap[nick] = user;
     }else{
         if (channelProps["inviteOnly"]){
             return false;
@@ -35,14 +35,14 @@ bool Channel::addUser(std::string userName, User &user){
     return true;
 }
 
-void Channel::removeUser(std::string userName) {
-    if (userMap.count(userName) == 1){
-        userMap.erase(userName);
+void Channel::removeUser(std::string nick) {
+    if (userMap.count(nick) == 1){
+        userMap.erase(nick);
     }
 }
 
-bool Channel::checkUser(std::string userName) {
-    return userMap.count(userName);
+bool Channel::checkUser(std::string nick) {
+    return userMap.count(nick);
 }
 
 void Channel::remove(){}
@@ -62,3 +62,22 @@ void Channel::setOp(std::string userName) {
 
 void Channel::setPassWord(std::string passWord) {this->passWord = passWord;}
 std::string Channel::getPassWord() {return this->passWord;}
+
+void Channel::setDescription(std::string description) {
+    this->description = description;
+}
+
+std::string Channel::getDescription() {return this->description;}
+
+std::string Channel::getChanOps() {
+    std::string rtn;
+    int i = 0;
+    for (auto it = chanOps.begin(); it != chanOps.end(); it++){
+        if (i != 0 ){
+            rtn +="\t";
+            i = 1;
+        }
+        rtn+=it->first;
+    }
+    return rtn;
+}

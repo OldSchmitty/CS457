@@ -75,3 +75,7 @@ void cs457::tcpServerSocket::setSocketOptions()
     setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, 
 	                (const void *)&optval , sizeof(int));
 }
+
+void cs457::tcpServerSocket::safeClose(){
+    shutdown(serverSocket, SHUT_RDWR);
+}

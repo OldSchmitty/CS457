@@ -22,9 +22,9 @@ class Channel {
     public:
         Channel();
         Channel(std::string name, std::string passWord, std::string description);
-        bool addUser(std::string userName, User &user);
-        void removeUser(std::string userName);
-        bool checkUser(std::string userName);
+        bool addUser(std::string nick, User &user);
+        void removeUser(std::string nick);
+        bool checkUser(std::string nick);
         void setPassWord(std::string passWord);
         std::string getPassWord();
         void setProp(std::string prop, bool var);
@@ -32,14 +32,9 @@ class Channel {
         std::string getName();
         void sendMsg(std::string msg);
         void setOp(std::string userName);
-
-    /*user map
-     *
-     * closeChannel()
-     * channelCreation
-     *
-     *
-     */
+        std::string getDescription();
+        void setDescription(std::string description);
+        std::string getChanOps();
 };
 
 

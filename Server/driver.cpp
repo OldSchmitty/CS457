@@ -17,10 +17,16 @@
 using namespace std;
 bool ready = true;
 mutex mtx;
+const int PORT = 0;
+const int CONFIG_FILE = 1;
+const int DBPATH = 2;
+
+int numUsers = 0;
 
 int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket, ChatServer &server, OutputManager &out){
     User *user = new User();
     user->setSocket(clientSocket.get());
+    user->setNick(clientSocket.get()->getUniqueIdentifier());
     std::string msg;
     ssize_t val;
     bool cont =true;
@@ -28,14 +34,17 @@ int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket, ChatServer &server, O
     while (cont)
     {
         tie(msg,val) = clientSocket.get()->recvString();
-        if (val != 0) {
-            cout<<"RECIEVED MESSAGE: "+msg<<endl;
-            string endString =msg.substr(msg.size()-2);
-            if (msg.substr(msg.size()-2) == "\r\n") {
-                msg = msg.substr(0, msg.size() - 2);
-                vector<string> outMessageV = Protocols::parseMessage(msg, user, server, clientSocket.get());
-                if (!outMessageV[0].empty()) {
-                    out.addToQueue(outMessageV[0], outMessageV[1], outMessageV[2]);
+        if (val > 0) {
+            vector<string> sVect = Protocols::split(msg, '\000');
+            for (int i = 0; i < sVect.size(); i++) {
+                string endString = sVect[i].substr(sVect[i].size() - 2);
+                if (sVect[i].substr(sVect[i].size() - 2) == "\r\n") {
+                    sVect[i] = sVect[i].substr(0, sVect[i].size() - 2);
+                    cout << "RECIEVED FROM " + clientSocket->getUniqueIdentifier()+" "+user->getUserName() + ":" + sVect[i]<<endl;
+                    vector<string> outMessageV = Protocols::parseMessage(sVect[i], user, server, clientSocket.get());
+                    if (!outMessageV[0].empty()) {
+                        out.addToQueue(outMessageV[0], outMessageV[1], outMessageV[2]);
+                    }
                 }
             }
         }else{
@@ -44,43 +53,112 @@ int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket, ChatServer &server, O
     }
     server.disconnect(user->getUserName());
     clientSocket.get()->closeSocket();
+    mtx.lock();
+    numUsers--;
+    mtx.unlock();
     return 1;
-
 }
 
-
-int main(int argc, char * argv[]) {
-    cout << "Initializing Socket" << std::endl;
-    cs457::tcpServerSocket mysocket(2000);
-    cout << "Binding Socket" << std::endl; 
-    mysocket.bindSocket(); 
-    cout << "Listening Socket" << std::endl; 
-    mysocket.listenSocket(); 
-    cout << "Waiting to Accept Socket" << std::endl;
+int backgroundListener(string parameters[], cs457::tcpServerSocket &mysocket, ChatServer& server){
     map <string, unique_ptr<thread>> threadM;
-    ChatServer server;
-    server.loadUserFile("/home/marks/School/CS457/Server/users");
-    server.loadChannelFile("/home/marks/School/CS457/Server/channels");
     OutputManager out(&server);
     out.start();
+    cout<<"Listening on port "<<parameters[PORT]<<endl;
     while (ready)
-    { 
+    {
         shared_ptr<cs457::tcpUserSocket> clientSocket;
-        int val; 
+        int val;
         tie(clientSocket,val) = mysocket.acceptSocket();
-        cout << "value for accept is " << val << std::endl; 
-        cout << "Socket Accepted" << std::endl;
-        unique_ptr<thread> t = make_unique<thread>(cclient,clientSocket, std::ref(server), std::ref(out));
-        threadM[clientSocket->getUniqueIdentifier()] = std::move(t);
+        if (val > 0) {
+            unique_ptr<thread> t = make_unique<thread>(cclient, clientSocket, std::ref(server), std::ref(out));
+            threadM[clientSocket->getUniqueIdentifier()] = std::move(t);
+            mtx.lock();
+            numUsers++;
+            mtx.unlock();
+        }
     }
-
+    server.shutDown();
     for (auto item = threadM.begin(); item != threadM.end(); item++){
         item->second->join();
     }
     out.stop();
+    cout<<"gothere";
     //TODO: CLOSE THE SERVER SOCKET AND END PROGRAM SOMEHOW??? Thread for doing commands at server?
     //TODO: full argument parser for all of the commands
     //TODO: actually broadcasting messages into channels
-    //TODO: config file support (all channel and user info in one file)
+    return 1;
+}
+
+
+int main(int argc, char * argv[]) {
+    string parameters[5] = {"","",""};
+    vector<string> addPorts;
+    if (argc %2 == 0){
+        cout<<"Error: missing value or argument.\n";
+    }
+    else{
+        for( int i = 1; i < argc-1; i+=2) {
+            string arg(argv[i]);
+            if (arg == "-port"){
+                parameters[PORT] = string(argv[i+1]);
+            }
+            else if (arg == "-configuration"){
+                parameters[CONFIG_FILE] = string(argv[i+1]);
+            }
+            else if (arg == "db"){
+                parameters[DBPATH] = string(argv[i+1]);
+            }
+        }
+    }
+    if (parameters[CONFIG_FILE] == "") {
+        parameters[CONFIG_FILE] = string(argv[0]) + "conf/chatserver.conf";
+    }
+    std::ifstream is;
+    is.open(parameters[CONFIG_FILE]);
+    std::string input;
+    while (getline(is, input)) {
+        std::vector<std::string> sVect = Protocols::split(input, '\t');
+        if (sVect.size() >= 2) {
+            if (sVect[0] == "port") {
+                parameters[PORT] = sVect[1];
+            } else if (sVect[0] == "dbpath" && parameters[DBPATH] == "") {
+                parameters[DBPATH] = argv[1];
+            } else if (sVect[0] == "additional_ports") {
+                addPorts = Protocols::split(sVect[1], ',');
+            }
+        }
+    }
+    is.close();
+
+    cs457::tcpServerSocket mysocket(stoul(parameters[PORT]));
+
+    mysocket.bindSocket();
+    mysocket.listenSocket();
+    ChatServer server(parameters[DBPATH]);
+    unique_ptr<thread> bgThread = make_unique<thread>(backgroundListener, parameters, std::ref(mysocket), std::ref(server));
+    input = "";
+    while(input != "EXIT"){
+        cin>>input;
+        if (input== "EXIT"){
+            ready = false;
+            bgThread->detach();
+            mysocket.safeClose();
+        }
+        else if (input == "help"){
+            cout<<"Current Supported Commands are:\n"
+            <<"help -- shows this menu\n"
+            <<"connections -- shows how many users are connected\n"
+            <<"userlist -- outputs lists of users currectly active"
+            <<"EXIT -- shuts down the server"<<endl;
+        }
+        else if (input == "userlist"){
+           server.showUsers();
+        }
+        else if (input == "connections"){
+            mtx.lock();
+            cout<<"There are "<<numUsers<<" users currently connected"<<endl;
+            mtx.unlock();
+        }
+    }
     return 0;
 }

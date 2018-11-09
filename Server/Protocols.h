@@ -12,7 +12,7 @@
 
 class Protocols {
     public:
-        static std::vector<std::string> parseMessage(std::string msg, User *user, ChatServer &server, cs457::tcpUserSocket *sckt);
+        static std::vector<std::string> parseMessage(std::string msg, User *&user, ChatServer &server, cs457::tcpUserSocket *sckt);
         static std::string getAction(std::string msg);
         static std::vector<std::string> split(const std::string& s, char delimiter);
 };
