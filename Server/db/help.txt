@@ -1,0 +1,13 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Help version 1.0:
+To login use these commands in this order:
+    /pass <passoword>
+    /nick <nickname>
+    /user <username>
+
+Supported Commands:
+    info: displays relevant server info
+    help: displays this page
+    die: shuts server down, only usable by admins
+    invite <nickname>: sends an invite to for user to join channel, if channel is invite only, allows user to join
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

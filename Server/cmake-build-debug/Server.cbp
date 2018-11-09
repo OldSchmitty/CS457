@@ -102,12 +102,6 @@
 		<Unit filename="/home/marks/School/CS457/Server/ChatServer.h">
 			<Option target="ChatServer"/>
 		</Unit>
-		<Unit filename="/home/marks/School/CS457/Server/ClientManager.cpp">
-			<Option target="ChatServer"/>
-		</Unit>
-		<Unit filename="/home/marks/School/CS457/Server/ClientManager.h">
-			<Option target="ChatServer"/>
-		</Unit>
 		<Unit filename="/home/marks/School/CS457/Server/OutputManager.cpp">
 			<Option target="ChatServer"/>
 		</Unit>

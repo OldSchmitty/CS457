@@ -24,15 +24,20 @@ void Channel::setProp(std::string prop, bool var){
 }
 
 bool Channel::addUser(std::string nick, User &user){
-
-    if (userMap.count(nick) == 0){
-        userMap[nick] = user;
-    }else{
-        if (channelProps["inviteOnly"]){
-            return false;
+    if (channelProps["inviteOnly"]){
+        if (isInvited(nick)) {
+            userMap[nick] = user;
+            return true;
         }
     }
-    return true;
+    else if (userMap.count(nick) == 0) {
+        userMap[nick] = user;
+        return true;
+    }
+    else{
+        return true;
+    }
+   return false;
 }
 
 void Channel::removeUser(std::string nick) {
@@ -52,7 +57,7 @@ std::string Channel::getName() {return this->channelName;}
 
 void Channel::sendMsg(std::string msg) {
     for (auto it = userMap.begin(); it != userMap.end(); it++){
-        it->second.sendMessage(msg);
+        it->second.sendMsg(msg);
     }
 }
 
@@ -73,11 +78,29 @@ std::string Channel::getChanOps() {
     std::string rtn;
     int i = 0;
     for (auto it = chanOps.begin(); it != chanOps.end(); it++){
-        if (i != 0 ){
+        if (it != chanOps.begin() ){
             rtn +="\t";
-            i = 1;
         }
         rtn+=it->first;
     }
     return rtn;
 }
+
+bool Channel::inviteUser(std::string userName, std::string inviteName) {
+    if (!channelProps["inviteOnly"]){
+        return true;
+    }
+    else if (chanOps.count(userName) || invites.count(userName)){
+        invites[inviteName] = true;
+        return true;
+    }
+    return false;
+}
+
+bool Channel::isInvited(std::string userName) {
+    if (invites.count(userName) || chanOps.count(userName))
+        return true;
+    return false;
+}
+
+bool Channel::isOP(std::string username) {return chanOps.count(username) == 1;}

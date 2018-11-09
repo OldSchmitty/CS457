@@ -6,7 +6,6 @@
 #define SERVER_CHATSERVER_H
 #include <string>
 #include "Channel.h"
-#include "ClientManager.h"
 #include <map>
 #include "User.h"
 #include "tcpUserSocket.h"
@@ -21,13 +20,15 @@ class ChatServer {
         std::vector<std::string> bannedUsers;
         std::string filePath;
         void outputFiles();
+        std::string helpString;
+        std::string infoString;
+        std::string rules;
 
     public:
         ChatServer();
         ChatServer(std::string filePath);
         int CreateChannel(std::string const channelName, const std::string passWord, const std::string description);
         int deleteChannel(std::string const channelName);
-        void removeUser(std::string userName, std::string ChannelName);
         bool addUser(std::string userName, std::string passWord, cs457::tcpUserSocket *socket);
         void addUser(User &user);
         std::string joinChannel(std::string userName, std::string channel, std::string passWord);
@@ -45,6 +46,19 @@ class ChatServer {
         void setBanner(std::string banner);
         void loadBannedUsersFile(std::string fileName);
         void loadBannerFile(std::string bannerFile);
+        void loadRules(std::string fileName);
+        std::string getRules();
+        void setHelpString(std::string help);
+        void setInfoString(std::string info);
+        std::string getInfoString();
+        std::string getHelpString();
+        void loadHelpFile(std::string fileName);
+        bool invite(std::string userName, std::string inviteName, std::string channelName);
+        void kick(std::string userName, std::string channel, std::string kickName);
+        void kill(std::string userName, std::string killName);
+        std::string getChannels();
+        void part(std::string userName, std::string channel);
+        void wallOPs(std::string userName, std::string msg);
 
 };
 

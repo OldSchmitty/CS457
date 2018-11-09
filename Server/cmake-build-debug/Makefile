@@ -231,33 +231,6 @@ ChatServer.cpp.s:
 	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/ChatServer.cpp.s
 .PHONY : ChatServer.cpp.s
 
-ClientManager.o: ClientManager.cpp.o
-
-.PHONY : ClientManager.o
-
-# target to build an object file
-ClientManager.cpp.o:
-	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/ClientManager.cpp.o
-.PHONY : ClientManager.cpp.o
-
-ClientManager.i: ClientManager.cpp.i
-
-.PHONY : ClientManager.i
-
-# target to preprocess a source file
-ClientManager.cpp.i:
-	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/ClientManager.cpp.i
-.PHONY : ClientManager.cpp.i
-
-ClientManager.s: ClientManager.cpp.s
-
-.PHONY : ClientManager.s
-
-# target to generate assembly for a file
-ClientManager.cpp.s:
-	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/ClientManager.cpp.s
-.PHONY : ClientManager.cpp.s
-
 OutputManager.o: OutputManager.cpp.o
 
 .PHONY : OutputManager.o
@@ -441,9 +414,6 @@ help:
 	@echo "... ChatServer.o"
 	@echo "... ChatServer.i"
 	@echo "... ChatServer.s"
-	@echo "... ClientManager.o"
-	@echo "... ClientManager.i"
-	@echo "... ClientManager.s"
 	@echo "... OutputManager.o"
 	@echo "... OutputManager.i"
 	@echo "... OutputManager.s"

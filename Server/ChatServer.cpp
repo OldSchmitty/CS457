@@ -18,6 +18,8 @@ ChatServer::ChatServer(std::string filePath){
     loadUserFile(filePath+"users");
     loadBannedUsersFile(filePath+"banusers.txt");
     loadBannerFile(filePath+"banner.txt");
+    loadHelpFile(filePath+"help.txt");
+    loadRules(filePath+"rules.txt");
 }
 
 int ChatServer::CreateChannel(std::string const channelName, const std::string passWord, const std::string description){
@@ -29,9 +31,13 @@ int ChatServer::deleteChannel(std::string const channelName){
     channelMap.erase(channelName);
 }
 
-void ChatServer::removeUser(std::string userName, std::string ChannelName){
-
+void ChatServer::kill(std::string userName, std::string killName){
+    if (userInfo.count(userName) && userInfo[userName].getLevel() >=2 ){
+        disconnect(killName);
+        userInfo[killName].disconnect();
+    }
 }
+
 bool ChatServer::addUser(std::string userName, std::string passWord, cs457::tcpUserSocket *sckt) {
     if (userInfo.count(userName) == 0) {
         User user(userName, passWord, false, sckt);
@@ -72,7 +78,7 @@ void ChatServer::shutDown() {
     outputFiles();
     for (auto it = userInfo.begin(); it != userInfo.end(); it++){
         if (it->second.getActive()) {
-            it->second.sendMessage("SERVER: THE SERVER IS SHUTTING DOWN.");
+            it->second.sendMsg("SERVER: THE SERVER IS SHUTTING DOWN.");
         }
     }
     for (auto it = userInfo.begin(); it != userInfo.end(); it++){
@@ -89,7 +95,23 @@ void ChatServer::banUser(std::string userName, std::string banName) {
                 it->second.removeUser(banName);
             }
         }
+        bannedUsers.push_back(userName);
 
+    }
+}
+
+void ChatServer::unBanUser(std::string userName, std::string banName) {
+    if (userInfo[userName].getLevel() >= SYSOP){
+        userInfo[banName].unBan();
+        int loc = -1;
+        for (int i = 0; i < bannedUsers.size(); i++){
+            if (bannedUsers[i] == banName){
+                loc = i;
+                break;
+            }
+        }
+        if (loc != -1)
+            bannedUsers.erase(bannedUsers.begin()+loc);
     }
 }
 
@@ -214,7 +236,12 @@ void ChatServer::outputFiles(){
     std::ofstream of;
     of.open(filePath+"channels");
     for (auto it = channelMap.begin(); it != channelMap.end(); it++){
-        of << it->first + "\t" + it->second.getDescription() + "\t" << it->second.getPassWord() + "\t"<<it->second.getChanOps() +"\n";
+        of << it->first + "\t" + it->second.getDescription() + "\t";
+        if (it->second.getPassWord() == "")
+            of << "@\t";
+        else
+            of << it->second.getPassWord() + "\t";
+        of << it->second.getChanOps() +"\n";
     }
     of.close();
     of.open(filePath+"users");
@@ -224,6 +251,8 @@ void ChatServer::outputFiles(){
             of<<it->second.getPassWord()+"\t";
         else
             of<<"@\t";
+        of << it->second.getLevel()<<"\t";
+
         if (it->second.getBanStatus())
             of << "true\t";
         else
@@ -244,3 +273,66 @@ void ChatServer::outputFiles(){
     of.close();
 }
 
+void ChatServer::loadHelpFile(std::string fileName) {
+    std::ifstream is;
+    is.open(fileName);
+    std::string help;
+    std::string current;
+    while(getline(is, current)){
+        help += current +"\n";
+    }
+    helpString = help;
+    is.close();
+}
+
+void ChatServer::loadRules(std::string fileName) {
+    std::ifstream is;
+    is.open(fileName);
+    std::string rules;
+    std::string current;
+    while(getline(is, current)){
+        rules += current +"\n";
+    }
+    this->rules = rules;
+    is.close();
+}
+std::string ChatServer::getRules(){return rules;}
+void ChatServer::setHelpString(std::string help){this->helpString = help;}
+void ChatServer::setInfoString(std::string info){this->infoString= info;}
+std::string ChatServer::getInfoString(){return infoString;}
+std::string ChatServer::getHelpString(){return helpString;}
+bool ChatServer::invite(std::string userName, std::string inviteName, std::string channelName) {
+    bool success =false;
+    if (channelMap.count(channelName)){
+        success= channelMap[channelName].inviteUser(userName, inviteName);
+    }
+    return success;
+}
+
+void ChatServer::kick(std::string userName, std::string channel, std::string kickName){
+    if (channelMap.count(channel) && userInfo.count(userName) && (userInfo[userName].getLevel() >=2 || channelMap[channel].isOP(userName))){
+        channelMap[channel].removeUser(kickName);
+    }
+}
+
+std::string ChatServer::getChannels() {
+    std::string rtn;
+    for (auto it = channelMap.begin(); it != channelMap.end(); it++)
+            rtn +=" "+it->first;
+    return rtn;
+}
+
+void ChatServer::part(std::string userName, std::string channel){
+    for (auto it = channelMap.begin(); it != channelMap.end(); it ++){
+        it->second.removeUser(userName);
+    }
+}
+
+void ChatServer::wallOPs(std::string userName, std::string msg) {
+    if(userInfo.count(userName) && userInfo[userName].getLevel() > 1)
+    for (auto it = userInfo.begin(); it != userInfo.end(); it++){
+        if (it->second.getLevel() > 1){
+            it->second.sendMsg("WALLOPS: "+userName+": "+msg);
+        }
+    }
+}

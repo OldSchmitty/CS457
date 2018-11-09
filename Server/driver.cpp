@@ -36,13 +36,19 @@ int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket, ChatServer &server, O
         tie(msg,val) = clientSocket.get()->recvString();
         if (val > 0) {
             vector<string> sVect = Protocols::split(msg, '\000');
+
             for (int i = 0; i < sVect.size(); i++) {
                 string endString = sVect[i].substr(sVect[i].size() - 2);
                 if (sVect[i].substr(sVect[i].size() - 2) == "\r\n") {
                     sVect[i] = sVect[i].substr(0, sVect[i].size() - 2);
                     cout << "RECIEVED FROM " + clientSocket->getUniqueIdentifier()+" "+user->getUserName() + ":" + sVect[i]<<endl;
                     vector<string> outMessageV = Protocols::parseMessage(sVect[i], user, server, clientSocket.get());
-                    if (!outMessageV[0].empty()) {
+                    if (outMessageV[0] == "DIE"){
+                        cout<<"SERVER IS BEING SHUT DOWN BY USER "+user->getNick()<<endl;
+                        server.shutDown();
+                        ready = false;
+                    }
+                    else if (!outMessageV[0].empty()) {
                         out.addToQueue(outMessageV[0], outMessageV[1], outMessageV[2]);
                     }
                 }
@@ -82,16 +88,12 @@ int backgroundListener(string parameters[], cs457::tcpServerSocket &mysocket, Ch
         item->second->join();
     }
     out.stop();
-    cout<<"gothere";
-    //TODO: CLOSE THE SERVER SOCKET AND END PROGRAM SOMEHOW??? Thread for doing commands at server?
-    //TODO: full argument parser for all of the commands
-    //TODO: actually broadcasting messages into channels
     return 1;
 }
 
 
 int main(int argc, char * argv[]) {
-    string parameters[5] = {"","",""};
+    string parameters[3] = {"","",string(argv[0])+"/"};
     vector<string> addPorts;
     if (argc %2 == 0){
         cout<<"Error: missing value or argument.\n";
@@ -105,7 +107,7 @@ int main(int argc, char * argv[]) {
             else if (arg == "-configuration"){
                 parameters[CONFIG_FILE] = string(argv[i+1]);
             }
-            else if (arg == "db"){
+            else if (arg == "-db"){
                 parameters[DBPATH] = string(argv[i+1]);
             }
         }
@@ -119,10 +121,10 @@ int main(int argc, char * argv[]) {
     while (getline(is, input)) {
         std::vector<std::string> sVect = Protocols::split(input, '\t');
         if (sVect.size() >= 2) {
-            if (sVect[0] == "port") {
+            if (sVect[0] == "-port") {
                 parameters[PORT] = sVect[1];
             } else if (sVect[0] == "dbpath" && parameters[DBPATH] == "") {
-                parameters[DBPATH] = argv[1];
+                parameters[DBPATH] = sVect[1];
             } else if (sVect[0] == "additional_ports") {
                 addPorts = Protocols::split(sVect[1], ',');
             }
@@ -135,6 +137,7 @@ int main(int argc, char * argv[]) {
     mysocket.bindSocket();
     mysocket.listenSocket();
     ChatServer server(parameters[DBPATH]);
+    server.setInfoString("Version: 1.0\n\tOwner: Mark Smith");
     unique_ptr<thread> bgThread = make_unique<thread>(backgroundListener, parameters, std::ref(mysocket), std::ref(server));
     input = "";
     while(input != "EXIT"){

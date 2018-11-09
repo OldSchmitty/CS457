@@ -18,6 +18,7 @@ class Channel {
         std::string description;
         std::map<std::string, bool> channelProps;
         std::map<std::string, bool> chanOps;
+        std::map<std::string, bool> invites;
 
     public:
         Channel();
@@ -35,6 +36,9 @@ class Channel {
         std::string getDescription();
         void setDescription(std::string description);
         std::string getChanOps();
+        bool inviteUser(std::string userName, std::string inviteName);
+        bool isInvited(std::string userName);
+        bool isOP(std::string username);
 };
 
 

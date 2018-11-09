@@ -24,6 +24,7 @@ int listener(shared_ptr<cs457::tcpUserSocket> userSocket){
     int val;
     while(!stop){
         tie(msg,val) = userSocket.get()->recvString();
+        vector<string> sVect = Protocols::split(msg,'\000');
         if (val <= 0) {
             stop = true;
             if (val == 0)
@@ -120,17 +121,24 @@ int main(int argc, char* argv[]){
                     userSocket->sendString(msg);
                 }
             }
+            sleep(50);
         }
         else {
             getline(cin, msg);
-            while (msg.find("/EXIT") == -1) {
+            while (!stop) {
                 if (channel == "" && msg.find("/") == -1) {
                     cout << "Not connected to a channel, only commands starting in / can be used" << endl;
                 } else {
                     msg = Protocols::makeMessage(msg, channel);
-                    userSocket->sendString(msg);
+                    if(msg == "QUIT"){
+                        stop = true;
+                    }
+                    else {
+                        userSocket->sendString(msg);
+                    }
                 }
-                getline(cin, msg);
+                if(!stop)
+                    getline(cin, msg);
             }
         }
         stop = true;

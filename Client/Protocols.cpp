@@ -60,5 +60,68 @@ std::string Protocols::commandFactory(std::string command, std::vector<std::stri
     else if (command == "nick" && args.size() == 2){
         rtn = "NICK "+args[1]+"\r\n";
     }
+    else if(command == "away"){
+        rtn = "AWAY";
+        if (args.size() >1)
+            rtn+=args[1];
+        rtn += "\r\n";
+    }
+    else if(command == "die"){
+        rtn = "DIE\r\n";
+    }else if(command == "info"){
+        rtn = "INFO\r\n";
+    }else if(command == "help"){
+        rtn = "HELP\r\n";
+    }else if(command == "invite"){
+        if (args.size() == 3){
+            rtn = "INVITE "+args[1]+" "+args[2]+"\r\n";
+        }
+    }else if (command == "ison"){
+        rtn = "ISON";
+        for (int i = 1; i < args.size(); i++) {
+            rtn += " " + args[i];
+        }
+        rtn +="\r\n";
+    } else if (command == "kick" && args.size() >= 3){
+        rtn = "KICK";
+        for (int i = 1; i <args.size(); i++){
+            rtn += " " +args[i];
+        }
+        rtn+="\r\n";
+    } else if (command == "kill" && args.size() == 2){
+        rtn = "KILL "+args[1]+"\r\n";
+    } else if (command == "knock" && args.size() == 2){
+        rtn = "KNOCK "+args[1] + "\r\n";
+    } else if (command == "list"){
+        rtn = "LIST\r\n";
+    } else if (command == "notice" and args.size() >= 3){
+        rtn = "NOTICE "+args[1];
+        for(int i = 2; i < args.size(); i ++){
+            rtn+=" "+args[i];
+        }
+        rtn+="\r\n";
+    }else if (command == "part" && args.size() >= 2){
+        rtn = "PART";
+        for (int i = 1;  i< args.size(); i ++){
+            rtn += " "+args[i];
+        }
+        rtn += "\r\n";
+    }else if (command == "ping"){
+        rtn = "PING\r\n";
+    }else if (command == "quit"){
+        rtn = "QUIT";
+    }else if (command == "rules"){
+        rtn = "RULES\r\n";
+    }else if(command == "setname" && args.size() == 2){
+        rtn = "SETNAME "+args[1]+"\r\n";
+    }else if (command == "time"){
+        rtn = "TIME\r\n";
+    }else if (command == "wallops"){
+        rtn = "WALLOPS";
+        for(int i = 1; i < args.size(); i ++){
+            rtn+=" "+args[i];
+        }
+        rtn+="\r\n";
+    }
     return rtn;
 }

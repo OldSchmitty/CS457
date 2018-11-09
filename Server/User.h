@@ -19,14 +19,14 @@ class User {
         std::string userName = "";
         std::string passWord = "";
         std::string nick = "";
-        std::string hostName = "";
-        std::string serverName = "";
         std::string realName = "";
         cs457::tcpUserSocket *scktPointer;
-        int level;
+        int level = 0;
         bool active = false;
         bool banStatus;
-        std::mutex* mtx;
+        mutable std::mutex *mtx = new std::mutex;
+        bool away;
+        std::string awayMessage;
 
 
     public:
@@ -44,7 +44,6 @@ class User {
         bool getActive();
         int getLevel();
         void setLevel(int level);
-        void sendMessage(std::string msg);
         void setSocket(cs457::tcpUserSocket *sckt);
         bool getBanStatus();
         void ban();
@@ -53,6 +52,10 @@ class User {
         void setRealName(std::string name);
         std::string getRealName();
         void disconnect();
+        void setAway(bool status, std::string msg = "");
+        bool getAway();
+        std::string getAwayMessage();
+
 };
 
 
