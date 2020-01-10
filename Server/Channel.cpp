@@ -3,6 +3,7 @@
 //
 
 #include "Channel.h"
+#include <iostream>
 
 Channel::Channel() {
     channelProps["inviteOnly"] = false;
@@ -10,13 +11,14 @@ Channel::Channel() {
     channelProps["outSideMessages"] = true;
 }
 
-Channel::Channel(std::string name, std::string passWord, std::string description) {
+Channel::Channel(std::string name, std::string passWord, std::string description, bool userChannel) {
     this->channelName = name;
     this->passWord = passWord;
     this->description = description;
     channelProps["inviteOnly"] = false;
     channelProps["anyoneInvite"] = true;
     channelProps["outSideMessages"] = true;
+    this->userChannel = userChannel;
 }
 
 void Channel::setProp(std::string prop, bool var){
@@ -27,14 +29,18 @@ bool Channel::addUser(std::string nick, User &user){
     if (channelProps["inviteOnly"]){
         if (isInvited(nick)) {
             userMap[nick] = user;
+            updateUsers();
             return true;
         }
     }
     else if (userMap.count(nick) == 0) {
         userMap[nick] = user;
+        updateUsers();
         return true;
+
     }
     else{
+        updateUsers();
         return true;
     }
    return false;
@@ -43,6 +49,7 @@ bool Channel::addUser(std::string nick, User &user){
 void Channel::removeUser(std::string nick) {
     if (userMap.count(nick) == 1){
         userMap.erase(nick);
+	updateUsers();
     }
 }
 
@@ -56,6 +63,15 @@ void Channel::remove(){}
 std::string Channel::getName() {return this->channelName;}
 
 void Channel::sendMsg(std::string msg) {
+    if (msg.find("USERSINCHANNEL:") == 0){
+	
+    }
+    else if(userChannel == true){
+        msg = std::string("#")+channelName+":"+msg;
+    }
+    else{
+        msg = std::string("##")+channelName+":"+msg;
+    }
     for (auto it = userMap.begin(); it != userMap.end(); it++){
         it->second.sendMsg(msg);
     }
@@ -104,3 +120,21 @@ bool Channel::isInvited(std::string userName) {
 }
 
 bool Channel::isOP(std::string username) {return chanOps.count(username) == 1;}
+bool Channel::getUserChannel() {return userChannel;}
+
+std::string Channel::getUsers(){
+    std::string rtn="";
+    for (auto it = userMap.begin(); it != userMap.end(); it++){
+	if (it != userMap.begin()){
+	    rtn+=",";
+        }        
+	rtn+=it->first;
+    }
+    return rtn;
+}
+
+void Channel::updateUsers(){
+    std::string msg = "USERSINCHANNEL:"+channelName+":";
+    msg+=getUsers();
+    sendMsg(msg);
+}

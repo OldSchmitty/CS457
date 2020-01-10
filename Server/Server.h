@@ -10,7 +10,7 @@
 #include "User.h"
 #include "tcpUserSocket.h"
 
-class ChatServer {
+class Server {
     private:
         std::map<std::string, Channel> channelMap;
         std::map<std::string, User> userInfo;
@@ -25,9 +25,9 @@ class ChatServer {
         std::string rules;
 
     public:
-        ChatServer();
-        ChatServer(std::string filePath);
-        int CreateChannel(std::string const channelName, const std::string passWord, const std::string description);
+        Server();
+        Server(std::string filePath);
+        int createChannel(std::string userName, std::string const channelName, const std::string passWord, const std::string description);
         int deleteChannel(std::string const channelName);
         bool addUser(std::string userName, std::string passWord, cs457::tcpUserSocket *socket);
         void addUser(User &user);
@@ -59,6 +59,7 @@ class ChatServer {
         std::string getChannels();
         void part(std::string userName, std::string channel);
         void wallOPs(std::string userName, std::string msg);
+	std::string getUsers(std::string channelName);
 
 };
 

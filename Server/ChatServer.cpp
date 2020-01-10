@@ -1,338 +1,167 @@
-//
-// Created by marks on 10/26/18.
-//
-
-#include <sys/user.h>
-#include "ChatServer.h"
-#include <fstream>
 #include <iostream>
+#include <string> 
+#include <tuple> 
+#include <thread>
+#include <memory> 
+#include "tcpUserSocket.h"
+#include "tcpServerSocket.h"
+#include <map>
+#include "Server.h"
+#include <condition_variable>
+#include <mutex>
 #include "Protocols.h"
+#include <vector>
+#include "OutputManager.h"
 
-ChatServer::ChatServer(){
+using namespace std;
+bool ready = true;
+mutex mtx;
+const int PORT = 0;
+const int CONFIG_FILE = 1;
+const int DBPATH = 2;
 
-}
+int numUsers = 0;
 
-ChatServer::ChatServer(std::string filePath){
-    this->filePath = filePath;
-    loadChannelFile(filePath+"channels");
-    loadUserFile(filePath+"users");
-    loadBannedUsersFile(filePath+"banusers.txt");
-    loadBannerFile(filePath+"banner.txt");
-    loadHelpFile(filePath+"help.txt");
-    loadRules(filePath+"rules.txt");
-}
+int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket, Server &server, OutputManager &out){
+    User *user = new User();
+    user->setSocket(clientSocket.get());
+    user->setNick(clientSocket.get()->getUniqueIdentifier());
+    std::string msg;
+    ssize_t val;
+    bool cont =true;
 
-int ChatServer::CreateChannel(std::string const channelName, const std::string passWord, const std::string description){
-    Channel channel(channelName, passWord, description);
-    channelMap[channelName] = channel;
-}
-int ChatServer::deleteChannel(std::string const channelName){
-    channelMap[channelName].remove();
-    channelMap.erase(channelName);
-}
+    while (cont)
+    {
+        tie(msg,val) = clientSocket.get()->recvString();
+        if (val > 0) {
+            vector<string> sVect = Protocols::split(msg, '\000');
 
-void ChatServer::kill(std::string userName, std::string killName){
-    if (userInfo.count(userName) && userInfo[userName].getLevel() >=2 ){
-        disconnect(killName);
-        userInfo[killName].disconnect();
-    }
-}
-
-bool ChatServer::addUser(std::string userName, std::string passWord, cs457::tcpUserSocket *sckt) {
-    if (userInfo.count(userName) == 0) {
-        User user(userName, passWord, false, sckt);
-        user.setActive();
-        this->userInfo[user.getUserName()] = user;
-    }else{
-        return false;
-    }
-    return true;
-}
-
-
-void ChatServer::disconnect(std::string userName){
-    for (auto it = channelMap.begin(); it != channelMap.end(); it++){
-        if (it->second.checkUser(userName)){
-            it->second.removeUser(userName);
+            for (int i = 0; i < sVect.size(); i++) {
+                string endString = sVect[i].substr(sVect[i].size() - 2);
+                if (sVect[i].substr(sVect[i].size() - 2) == "\r\n") {
+                    sVect[i] = sVect[i].substr(0, sVect[i].size() - 2);
+                    cout << "RECIEVED FROM " + clientSocket->getUniqueIdentifier()+" "+user->getUserName() + ":" + sVect[i]<<endl;
+                    vector<string> outMessageV = Protocols::parseMessage(sVect[i], user, server, clientSocket.get());
+                    if (outMessageV[0] == "DIE"){
+                        cout<<"SERVER IS BEING SHUT DOWN BY USER "+user->getNick()<<endl;
+                        server.shutDown();
+                        ready = false;
+                    }
+                    else if (!outMessageV[0].empty()) {
+                        out.addToQueue(outMessageV[0], outMessageV[1], outMessageV[2]);
+                    }
+                }
+            }
+        }else{
+            cont = false;
         }
-
     }
+    server.disconnect(user->getUserName());
+    clientSocket.get()->closeSocket();
+    mtx.lock();
+    numUsers--;
+    mtx.unlock();
+    return 1;
+}
+
+int backgroundListener(string parameters[], cs457::tcpServerSocket &mysocket, Server& server){
+    map <string, unique_ptr<thread>> threadM;
+    OutputManager out(&server);
+    out.start();
+    cout<<"Listening on port "<<parameters[PORT]<<endl;
+    while (ready)
+    {
+        shared_ptr<cs457::tcpUserSocket> clientSocket;
+        int val;
+        tie(clientSocket,val) = mysocket.acceptSocket();
+        if (val > 0) {
+            clientSocket.get()->sendString(server.getBanner());
+            unique_ptr<thread> t = make_unique<thread>(cclient, clientSocket, std::ref(server), std::ref(out));
+            threadM[clientSocket->getUniqueIdentifier()] = std::move(t);
+            mtx.lock();
+            numUsers++;
+            mtx.unlock();
+        }
+    }
+    server.shutDown();
+    for (auto item = threadM.begin(); item != threadM.end(); item++){
+        item->second->join();
+    }
+    out.stop();
+    return 1;
 }
 
 
-std::string ChatServer::joinChannel(std::string userName, std::string channel, std::string passWord){
-    bool success = false;
-    if (channelMap.count(channel) == 1) {
-        if(channelMap[channel].getPassWord() == passWord)
-            success = channelMap[channel].addUser(userName, userInfo[userName]);
-        else
-            return "You entered the wrong password for channel "+channel+"\r\n";
+int main(int argc, char * argv[]) {
+    string parameters[3] = {"2000","",string(argv[0])+"/"};
+    vector<string> addPorts;
+    if (argc %2 == 0){
+        cout<<"Error: missing value or argument.\n";
     }
     else{
-        return "Channel does not exists\r\n";
-    }
-    return "SERVER: Welcome to channel "+channel+ "\nDescription: "+channelMap[channel].getDescription()+"\r\n";
-}
-
-void ChatServer::shutDown() {
-    outputFiles();
-    for (auto it = userInfo.begin(); it != userInfo.end(); it++){
-        if (it->second.getActive()) {
-            it->second.sendMsg("SERVER: THE SERVER IS SHUTTING DOWN.");
-        }
-    }
-    for (auto it = userInfo.begin(); it != userInfo.end(); it++){
-        if (it->second.getActive()) {
-            it->second.disconnect();
-        }
-    }
-}
-void ChatServer::banUser(std::string userName, std::string banName) {
-    if (userInfo[userName].getLevel() >= SYSOP){
-        userInfo[banName].ban();
-        for (auto it = channelMap.begin(); it != channelMap.end(); it++){
-            if (it->second.checkUser(banName)){
-                it->second.removeUser(banName);
+        for( int i = 1; i < argc-1; i+=2) {
+            string arg(argv[i]);
+            if (arg == "-port"){
+                parameters[PORT] = string(argv[i+1]);
+            }
+            else if (arg == "-configuration"){
+                parameters[CONFIG_FILE] = string(argv[i+1]);
+            }
+            else if (arg == "-db"){
+                parameters[DBPATH] = string(argv[i+1]);
             }
         }
-        bannedUsers.push_back(userName);
-
     }
-}
-
-void ChatServer::unBanUser(std::string userName, std::string banName) {
-    if (userInfo[userName].getLevel() >= SYSOP){
-        userInfo[banName].unBan();
-        int loc = -1;
-        for (int i = 0; i < bannedUsers.size(); i++){
-            if (bannedUsers[i] == banName){
-                loc = i;
-                break;
-            }
-        }
-        if (loc != -1)
-            bannedUsers.erase(bannedUsers.begin()+loc);
+    if (parameters[CONFIG_FILE] == "") {
+        parameters[CONFIG_FILE] = string(argv[0]) + "conf/chatserver.conf";
     }
-}
-
-void ChatServer::sendMsg(std::string msg, std::string channel, std::string userName) {
-    if (channel != "" && userName == ""){
-        if (this->channelMap.count(channel) == 1)
-            channelMap[channel].sendMsg(msg);
-    }
-    else if (userName != "" and channel == ""){
-        if (userInfo.count(userName) == 1)
-            userInfo[userName].sendMsg(msg);
-    }
-}
-
-void ChatServer::loadChannelFile(std::string fileName) {
     std::ifstream is;
-    is.open(fileName);
+    is.open(parameters[CONFIG_FILE]);
     std::string input;
-    while(getline(is, input))
-    {
+    while (getline(is, input)) {
         std::vector<std::string> sVect = Protocols::split(input, '\t');
-        if (sVect.size() >= 3){
-            std::string channelName = sVect[0];
-            std::string description = sVect[1];
-            std::string  passWord = sVect[2];
-            if (passWord == "@")
-                passWord = "";
-            Channel channel(channelName, passWord, description);
-            for (int i = 3; i<sVect.size(); i++)
-            {
-                channel.setOp(sVect[i]);
+        if (sVect.size() >= 2) {
+            if (sVect[0] == "-port") {
+                parameters[PORT] = sVect[1];
+            } else if (sVect[0] == "dbpath" && parameters[DBPATH] == "") {
+                parameters[DBPATH] = sVect[1];
+            } else if (sVect[0] == "additional_ports") {
+                addPorts = Protocols::split(sVect[1], ',');
             }
-            channelMap[channelName] = channel;
         }
     }
     is.close();
-}
 
-void ChatServer::loadUserFile(std::string fileName) {
-    std::ifstream is;
-    is.open(fileName);
-    std::string input;
-    while(getline(is, input))
-    {
-        std::vector<std::string> sVect = Protocols::split(input, '\t');
-        if (sVect.size() == 6){
-            std::string userName = sVect[0];
-            std::string nick = sVect[1];
-            std::string password = sVect[2];
-            if (password == "@")
-                password = "";
-            int level = stoi(sVect[3]);
-            std::string banned = sVect[4];
-            std::string realName = sVect[5];
-            if (realName == "@")
-                realName = "";
-            User user;
-            user.setNick(nick);
-            user.setUserName(userName);
-            user.setPassWord(password);
-            user.setLevel(level);
-            user.setRealName(realName);
-            if (banned == "true"){
-                user.ban();
-            }
-            userInfo[nick] = user;
+    cs457::tcpServerSocket mysocket(stoul(parameters[PORT]));
+
+    mysocket.bindSocket();
+    mysocket.listenSocket();
+    Server server(parameters[DBPATH]);
+    server.setInfoString("Version: 1.0\n\tOwner: Mark Smith");
+    unique_ptr<thread> bgThread = make_unique<thread>(backgroundListener, parameters, std::ref(mysocket), std::ref(server));
+    input = "";
+    while(input != "EXIT"){
+        cin>>input;
+        if (input== "EXIT"){
+            ready = false;
+            bgThread->detach();
+            mysocket.safeClose();
+        }
+        else if (input == "help"){
+            cout<<"Current Supported Commands are:\n"
+            <<"help -- shows this menu\n"
+            <<"connections -- shows how many users are connected\n"
+            <<"userlist -- outputs lists of users currectly active"
+            <<"EXIT -- shuts down the server"<<endl;
+        }
+        else if (input == "userlist"){
+           server.showUsers();
+        }
+        else if (input == "connections"){
+            mtx.lock();
+            cout<<"There are "<<numUsers<<" users currently connected"<<endl;
+            mtx.unlock();
         }
     }
-    is.close();
-}
-
-User* ChatServer::getUser(std::string userName) {
-    User* rtn = nullptr;
-    if (userInfo.count(userName) == 1){
-        rtn =  &userInfo[userName];
-    }
-    return rtn;
-}
-
-bool ChatServer::hasChannel(std::string channelName) {
-    return (channelMap.count(channelName) == 1);
-}
-
-void ChatServer::addUser(User &user){
-    userInfo[user.getNick()] = user;
-}
-
-void ChatServer::showUsers() {
-    for (auto it= userInfo.begin(); it != userInfo.end(); it++){
-        if (it->second.getActive()){
-            std::cout<<it->second.getUserName()<<std::endl;
-        }
-    }
-}
-
-std::string ChatServer::getBanner() {
-    return this->banner;
-}
-
-void ChatServer::setBanner(std::string banner){this->banner = banner;}
-
-void ChatServer::loadBannedUsersFile(std::string fileName){
-    std::ifstream is;
-    is.open(fileName);
-    std::string input;
-    while(getline(is, input)) {
-        this->bannedUsers.push_back(input);
-    }
-}
-void ChatServer::loadBannerFile(std::string bannerFile){
-    std::ifstream is;
-    is.open(bannerFile);
-    std::string banner;
-    std::string input;
-    while(getline(is, input)) {
-        banner += input;
-    }
-    this->setBanner(banner);
-}
-
-void ChatServer::outputFiles(){
-    std::ofstream of;
-    of.open(filePath+"channels");
-    for (auto it = channelMap.begin(); it != channelMap.end(); it++){
-        of << it->first + "\t" + it->second.getDescription() + "\t";
-        if (it->second.getPassWord() == "")
-            of << "@\t";
-        else
-            of << it->second.getPassWord() + "\t";
-        of << it->second.getChanOps() +"\n";
-    }
-    of.close();
-    of.open(filePath+"users");
-    for (auto it = userInfo.begin(); it != userInfo.end(); it++){
-        of << it->second.getUserName()+"\t"<<it->first+"\t";
-        if (it->second.getPassWord() != "")
-            of<<it->second.getPassWord()+"\t";
-        else
-            of<<"@\t";
-        of << it->second.getLevel()<<"\t";
-
-        if (it->second.getBanStatus())
-            of << "true\t";
-        else
-            of << "false\t";
-        if (it->second.getRealName() == "")
-            of << "@\n";
-        else
-            of << it->second.getRealName()<<"\n";
-    }
-    of.close();
-    of.open(filePath+"banusers.txt");
-    for (int i = 0; i < bannedUsers.size(); i++){
-        of << bannedUsers[i]<<"\n";
-    }
-    of.close();
-    of.open(filePath+"banner.txt");
-    of << banner+"\n";
-    of.close();
-}
-
-void ChatServer::loadHelpFile(std::string fileName) {
-    std::ifstream is;
-    is.open(fileName);
-    std::string help;
-    std::string current;
-    while(getline(is, current)){
-        help += current +"\n";
-    }
-    helpString = help;
-    is.close();
-}
-
-void ChatServer::loadRules(std::string fileName) {
-    std::ifstream is;
-    is.open(fileName);
-    std::string rules;
-    std::string current;
-    while(getline(is, current)){
-        rules += current +"\n";
-    }
-    this->rules = rules;
-    is.close();
-}
-std::string ChatServer::getRules(){return rules;}
-void ChatServer::setHelpString(std::string help){this->helpString = help;}
-void ChatServer::setInfoString(std::string info){this->infoString= info;}
-std::string ChatServer::getInfoString(){return infoString;}
-std::string ChatServer::getHelpString(){return helpString;}
-bool ChatServer::invite(std::string userName, std::string inviteName, std::string channelName) {
-    bool success =false;
-    if (channelMap.count(channelName)){
-        success= channelMap[channelName].inviteUser(userName, inviteName);
-    }
-    return success;
-}
-
-void ChatServer::kick(std::string userName, std::string channel, std::string kickName){
-    if (channelMap.count(channel) && userInfo.count(userName) && (userInfo[userName].getLevel() >=2 || channelMap[channel].isOP(userName))){
-        channelMap[channel].removeUser(kickName);
-    }
-}
-
-std::string ChatServer::getChannels() {
-    std::string rtn;
-    for (auto it = channelMap.begin(); it != channelMap.end(); it++)
-            rtn +=" "+it->first;
-    return rtn;
-}
-
-void ChatServer::part(std::string userName, std::string channel){
-    for (auto it = channelMap.begin(); it != channelMap.end(); it ++){
-        it->second.removeUser(userName);
-    }
-}
-
-void ChatServer::wallOPs(std::string userName, std::string msg) {
-    if(userInfo.count(userName) && userInfo[userName].getLevel() > 1)
-    for (auto it = userInfo.begin(); it != userInfo.end(); it++){
-        if (it->second.getLevel() > 1){
-            it->second.sendMsg("WALLOPS: "+userName+": "+msg);
-        }
-    }
+    return 0;
 }

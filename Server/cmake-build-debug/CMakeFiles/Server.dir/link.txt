@@ -1,1 +1,0 @@
-/usr/bin/c++  -pthread -g   CMakeFiles/Server.dir/driver.cpp.o CMakeFiles/Server.dir/tcpUserSocket.cpp.o CMakeFiles/Server.dir/tcpServerSocket.cpp.o  -o Server 
