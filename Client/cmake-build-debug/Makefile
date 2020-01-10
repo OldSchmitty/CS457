@@ -123,32 +123,86 @@ Client/fast:
 	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/build
 .PHONY : Client/fast
 
-main.o: main.cpp.o
+ClientDriver.o: ClientDriver.cpp.o
 
-.PHONY : main.o
+.PHONY : ClientDriver.o
 
 # target to build an object file
-main.cpp.o:
-	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/main.cpp.o
-.PHONY : main.cpp.o
+ClientDriver.cpp.o:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/ClientDriver.cpp.o
+.PHONY : ClientDriver.cpp.o
 
-main.i: main.cpp.i
+ClientDriver.i: ClientDriver.cpp.i
 
-.PHONY : main.i
+.PHONY : ClientDriver.i
 
 # target to preprocess a source file
-main.cpp.i:
-	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/main.cpp.i
-.PHONY : main.cpp.i
+ClientDriver.cpp.i:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/ClientDriver.cpp.i
+.PHONY : ClientDriver.cpp.i
 
-main.s: main.cpp.s
+ClientDriver.s: ClientDriver.cpp.s
 
-.PHONY : main.s
+.PHONY : ClientDriver.s
 
 # target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/main.cpp.s
-.PHONY : main.cpp.s
+ClientDriver.cpp.s:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/ClientDriver.cpp.s
+.PHONY : ClientDriver.cpp.s
+
+Protocols.o: Protocols.cpp.o
+
+.PHONY : Protocols.o
+
+# target to build an object file
+Protocols.cpp.o:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/Protocols.cpp.o
+.PHONY : Protocols.cpp.o
+
+Protocols.i: Protocols.cpp.i
+
+.PHONY : Protocols.i
+
+# target to preprocess a source file
+Protocols.cpp.i:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/Protocols.cpp.i
+.PHONY : Protocols.cpp.i
+
+Protocols.s: Protocols.cpp.s
+
+.PHONY : Protocols.s
+
+# target to generate assembly for a file
+Protocols.cpp.s:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/Protocols.cpp.s
+.PHONY : Protocols.cpp.s
+
+tcpUserSocket.o: tcpUserSocket.cpp.o
+
+.PHONY : tcpUserSocket.o
+
+# target to build an object file
+tcpUserSocket.cpp.o:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/tcpUserSocket.cpp.o
+.PHONY : tcpUserSocket.cpp.o
+
+tcpUserSocket.i: tcpUserSocket.cpp.i
+
+.PHONY : tcpUserSocket.i
+
+# target to preprocess a source file
+tcpUserSocket.cpp.i:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/tcpUserSocket.cpp.i
+.PHONY : tcpUserSocket.cpp.i
+
+tcpUserSocket.s: tcpUserSocket.cpp.s
+
+.PHONY : tcpUserSocket.s
+
+# target to generate assembly for a file
+tcpUserSocket.cpp.s:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/tcpUserSocket.cpp.s
+.PHONY : tcpUserSocket.cpp.s
 
 # Help Target
 help:
@@ -159,9 +213,15 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... Client"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
+	@echo "... ClientDriver.o"
+	@echo "... ClientDriver.i"
+	@echo "... ClientDriver.s"
+	@echo "... Protocols.o"
+	@echo "... Protocols.i"
+	@echo "... Protocols.s"
+	@echo "... tcpUserSocket.o"
+	@echo "... tcpUserSocket.i"
+	@echo "... tcpUserSocket.s"
 .PHONY : help
 
 
