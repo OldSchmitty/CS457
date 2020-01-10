@@ -4,9 +4,9 @@ SET(CMAKE_CXX_FLAGS -pthread)
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(ChatServer
-        driver.cpp
+        ChatServer.cpp
         tcpUserSocket.h
         tcpUserSocket.cpp
         tcpServerSocket.h
         tcpServerSocket.cpp
-        cmake-build-debug/CMakeFiles/main.cpp Channel.cpp Channel.h Protocols.h ChatServer.cpp ChatServer.h User.cpp User.h CClient.cpp CClient.h OutputManager.cpp OutputManager.h Protocols.cpp)
+        cmake-build-debug/CMakeFiles/Channel.cpp Channel.h Protocols.h Server.cpp Server.h User.cpp User.h OutputManager.cpp OutputManager.h Protocols.cpp)

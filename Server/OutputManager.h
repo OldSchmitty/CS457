@@ -7,7 +7,7 @@
 #include <string>
 #include <mutex>
 #include <vector>
-#include "ChatServer.h"
+#include "Server.h"
 #include <queue>
 #include <condition_variable>
 #include <thread>
@@ -27,14 +27,14 @@ class OutputManager {
 
     public:
         void addToQueue(std::string msg, std::string channel, std::string user);
-        OutputManager(ChatServer *server);
+        OutputManager(Server *server);
         void stop();
         void start();
         bool ready = true;
         std::mutex mtx;
         std::condition_variable cv;
         std::queue<Message> messages;
-        ChatServer *server;
+        Server *server;
 
 
 

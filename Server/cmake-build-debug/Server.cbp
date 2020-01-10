@@ -99,9 +99,6 @@
 		<Unit filename="/home/marks/School/CS457/Server/ChatServer.cpp">
 			<Option target="ChatServer"/>
 		</Unit>
-		<Unit filename="/home/marks/School/CS457/Server/ChatServer.h">
-			<Option target="ChatServer"/>
-		</Unit>
 		<Unit filename="/home/marks/School/CS457/Server/OutputManager.cpp">
 			<Option target="ChatServer"/>
 		</Unit>
@@ -114,6 +111,12 @@
 		<Unit filename="/home/marks/School/CS457/Server/Protocols.h">
 			<Option target="ChatServer"/>
 		</Unit>
+		<Unit filename="/home/marks/School/CS457/Server/Server.cpp">
+			<Option target="ChatServer"/>
+		</Unit>
+		<Unit filename="/home/marks/School/CS457/Server/Server.h">
+			<Option target="ChatServer"/>
+		</Unit>
 		<Unit filename="/home/marks/School/CS457/Server/User.cpp">
 			<Option target="ChatServer"/>
 		</Unit>
@@ -121,9 +124,6 @@
 			<Option target="ChatServer"/>
 		</Unit>
 		<Unit filename="/home/marks/School/CS457/Server/cmake-build-debug/CMakeFiles/main.cpp">
-			<Option target="ChatServer"/>
-		</Unit>
-		<Unit filename="/home/marks/School/CS457/Server/driver.cpp">
 			<Option target="ChatServer"/>
 		</Unit>
 		<Unit filename="/home/marks/School/CS457/Server/tcpServerSocket.cpp">

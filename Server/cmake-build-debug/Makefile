@@ -285,6 +285,33 @@ Protocols.cpp.s:
 	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/Protocols.cpp.s
 .PHONY : Protocols.cpp.s
 
+Server.o: Server.cpp.o
+
+.PHONY : Server.o
+
+# target to build an object file
+Server.cpp.o:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/Server.cpp.o
+.PHONY : Server.cpp.o
+
+Server.i: Server.cpp.i
+
+.PHONY : Server.i
+
+# target to preprocess a source file
+Server.cpp.i:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/Server.cpp.i
+.PHONY : Server.cpp.i
+
+Server.s: Server.cpp.s
+
+.PHONY : Server.s
+
+# target to generate assembly for a file
+Server.cpp.s:
+	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/Server.cpp.s
+.PHONY : Server.cpp.s
+
 User.o: User.cpp.o
 
 .PHONY : User.o
@@ -311,33 +338,6 @@ User.s: User.cpp.s
 User.cpp.s:
 	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/User.cpp.s
 .PHONY : User.cpp.s
-
-driver.o: driver.cpp.o
-
-.PHONY : driver.o
-
-# target to build an object file
-driver.cpp.o:
-	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/driver.cpp.o
-.PHONY : driver.cpp.o
-
-driver.i: driver.cpp.i
-
-.PHONY : driver.i
-
-# target to preprocess a source file
-driver.cpp.i:
-	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/driver.cpp.i
-.PHONY : driver.cpp.i
-
-driver.s: driver.cpp.s
-
-.PHONY : driver.s
-
-# target to generate assembly for a file
-driver.cpp.s:
-	$(MAKE) -f CMakeFiles/ChatServer.dir/build.make CMakeFiles/ChatServer.dir/driver.cpp.s
-.PHONY : driver.cpp.s
 
 tcpServerSocket.o: tcpServerSocket.cpp.o
 
@@ -420,12 +420,12 @@ help:
 	@echo "... Protocols.o"
 	@echo "... Protocols.i"
 	@echo "... Protocols.s"
+	@echo "... Server.o"
+	@echo "... Server.i"
+	@echo "... Server.s"
 	@echo "... User.o"
 	@echo "... User.i"
 	@echo "... User.s"
-	@echo "... driver.o"
-	@echo "... driver.i"
-	@echo "... driver.s"
 	@echo "... tcpServerSocket.o"
 	@echo "... tcpServerSocket.i"
 	@echo "... tcpServerSocket.s"

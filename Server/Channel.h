@@ -16,13 +16,14 @@ class Channel {
         std::string channelName;
         std::string passWord;
         std::string description;
+	bool userChannel;
         std::map<std::string, bool> channelProps;
         std::map<std::string, bool> chanOps;
         std::map<std::string, bool> invites;
 
     public:
         Channel();
-        Channel(std::string name, std::string passWord, std::string description);
+        Channel(std::string name, std::string passWord, std::string description, bool userChannel);
         bool addUser(std::string nick, User &user);
         void removeUser(std::string nick);
         bool checkUser(std::string nick);
@@ -39,6 +40,9 @@ class Channel {
         bool inviteUser(std::string userName, std::string inviteName);
         bool isInvited(std::string userName);
         bool isOP(std::string username);
+	bool getUserChannel();
+	std::string getUsers();
+	void updateUsers();
 };
 
 

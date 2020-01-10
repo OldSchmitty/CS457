@@ -20,7 +20,7 @@ std::vector<std::string> Protocols::split(const std::string& s, char delimiter) 
 }
 
 
-std::vector<std::string> Protocols::parseMessage(std::string msg, User *&user, ChatServer &server, cs457::tcpUserSocket *sckt) {
+std::vector<std::string> Protocols::parseMessage(std::string msg, User *&user, Server &server, cs457::tcpUserSocket *sckt) {
     std::vector<std::string> sVect = split(msg,' ');
     std::vector<std::string> outV = {"","",""};
     if (sVect[0] == "PASS"){
@@ -28,7 +28,11 @@ std::vector<std::string> Protocols::parseMessage(std::string msg, User *&user, C
             user->setPassWord(sVect[1]);
         }
     }else if (sVect[0] == "NICK"){
-        if (sVect.size() == 2 && !user->getPassWord().empty()) {
+        if (sVect.size() == 2 && server.getUser(sVect[1]) == nullptr){
+            user->setNick(sVect[1]);
+            user->setActive();
+        }
+        else if (sVect.size() == 2 && !user->getPassWord().empty()) {
             user->setNick(sVect[1]);
         }
         else if (sVect.size() == 2 && user->getPassWord().empty()){
@@ -159,7 +163,7 @@ std::vector<std::string> Protocols::parseMessage(std::string msg, User *&user, C
         }
     }else if (sVect[0] == "PART" && sVect.size() >= 2){
         for (int i = 1; i< sVect.size(); i++){
-            user->sendMsg("SERVER: "+sVect[i]+ " is going to miss you! (you left the channel)");
+            user->sendMsg("SERVER: Leaving channel "+sVect[i]);
             server.part(user->getNick(), sVect[i]);
         }
     }else if (sVect[0] == "PING"){
@@ -174,10 +178,8 @@ std::vector<std::string> Protocols::parseMessage(std::string msg, User *&user, C
         struct tm  tstruct;
         char       buf[80];
         tstruct = *localtime(&now);
-        // Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
-        // for more information about date/time format
         strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
-        user->sendMsg("SERVER: THe current server time is :" + std::string(buf));
+        user->sendMsg("SERVER: The current server time is :" + std::string(buf));
     }else if(sVect[0] == "WALLOPS"){
         for (int i = 1; i < sVect.size(); i++){
             if (i>1){
@@ -187,7 +189,18 @@ std::vector<std::string> Protocols::parseMessage(std::string msg, User *&user, C
         }
         server.wallOPs(user->getNick(), outV[0]);
     }
-
+    else if (sVect[0] == "USERSINCHANNEL" && sVect.size() > 1){
+        user->sendMsg("USERSINCHANNEL:"+sVect[1]+":"+server.getUsers(sVect[1]));
+    }
+    else if(sVect[0] == "REGISTER" && sVect.size() == 3 && user->getActive()){
+        std::string description = "Channel made by "+user->getNick();
+        if (sVect[2] == "@")
+            sVect[2] = "";
+        server.createChannel(user->getUserName(),sVect[1], sVect[2], description);
+        std::string response = server.joinChannel(user->getNick(), sVect[1], sVect[2]);
+        outV[0] = response;
+        outV[2] = user->getNick();
+    } 
 
 
     return outV;

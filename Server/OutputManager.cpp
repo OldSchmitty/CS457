@@ -5,7 +5,7 @@
 #include "OutputManager.h"
 #include "Protocols.h"
 
-OutputManager::OutputManager(ChatServer *server) {
+OutputManager::OutputManager(Server *server) {
     this-> server = server;
 }
 

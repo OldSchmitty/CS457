@@ -23,7 +23,7 @@ class User {
         cs457::tcpUserSocket *scktPointer;
         int level = 0;
         bool active = false;
-        bool banStatus;
+        bool banStatus = false;
         mutable std::mutex *mtx = new std::mutex;
         bool away;
         std::string awayMessage;
@@ -55,7 +55,8 @@ class User {
         void setAway(bool status, std::string msg = "");
         bool getAway();
         std::string getAwayMessage();
-
+	std::vector<std::string> userChannels;
+	
 };
 
 
